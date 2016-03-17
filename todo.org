@@ -1,0 +1,16 @@
+* TODO Correct command line flags
+
+* TODO Input
+1. one file for one compound
+
+* TODO API 
+1. front end read vector of string
+2. back end receive vector of string
+
+* TODO Kernel
+1. [ ] check implementation of features
+   1. [ ] scoring function for binding
+
+* TODO Data analysis
+1. Clustering
+2. Dump trajectories to plain text csv format

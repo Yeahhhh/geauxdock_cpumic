@@ -1,0 +1,13 @@
+
+# prepair input data
+cd bin && ./mklist.sh
+
+# build
+cd src && make -B -j10
+
+
+# run on CPU with 20 threads
+export OMP_PROC_BIND=true
+export OMP_NUM_THREADS=20
+make run
+

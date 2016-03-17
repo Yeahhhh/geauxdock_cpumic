@@ -1,0 +1,1 @@
+1ptvA1 /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1ptvA1.sdf /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1ptvA1-0.8.ff

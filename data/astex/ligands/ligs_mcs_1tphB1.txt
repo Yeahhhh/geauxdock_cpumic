@@ -1,0 +1,1 @@
+1tphB1 /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1tphB1.sdf /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1tphB1-0.8.ff

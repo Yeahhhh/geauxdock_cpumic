@@ -1,0 +1,8 @@
+1bl7A1 /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1bl7A1.sdf /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1bl7A1-0.8.ff
+1dy9A1 /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1dy9A1.sdf /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1dy9A1-0.8.ff
+1fgiB1 /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1fgiB1.sdf /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1fgiB1-0.8.ff
+1qcfA1 /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1qcfA1.sdf /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1qcfA1-0.8.ff
+1qpeA1 /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1qpeA1.sdf /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1qpeA1-0.8.ff
+1ydrA1 /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1ydrA1.sdf /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1ydrA1-0.8.ff
+1ydsA1 /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1ydsA1.sdf /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1ydsA1-0.8.ff
+1ydtA1 /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1ydtA1.sdf /worka/work/yfang11/geauxdock_cs/data/astex/ligands/1ydtA1-0.8.ff

@@ -1,0 +1,100 @@
+TARGET_GPU := 0
+TARGET_CPU := 1
+TARGET_MIC := 2
+
+MARCRO_TARGET += -DTARGET_GPU=$(TARGET_GPU) -DTARGET_CPU=$(TARGET_CPU) -DTARGET_MIC=$(TARGET_MIC)
+
+
+CXX_MPI := mpiicpc
+CXX_HOST := icpc
+FC_HOST := ifort
+
+HEADPATH += -I. -I./module
+
+LIBPATH += -L./module/lib
+
+LINKFLAGS += -lm -lrt -lyeahc
+LINKFLAGS += -openmp
+
+
+FCFLAGS_HOST += -O3
+
+CXXFLAGS_HOST += $(HEADPATH) $(MARCRO_MAKE)
+CXXFLAGS_HOST += -Wall
+CXXFLAGS_HOST += -O3
+CXXFLAGS_HOST += -ip -ipo
+CXXFLAGS_HOST += -fno-fnalias -ansi-alias -fargument-noalias
+CXXFLAGS_HOST += -openmp
+
+
+
+
+######################################################
+
+
+EXE := dock
+OBJ += dock.o
+OBJ += backend_cpu.o
+#OBJ += util_optimize_soa_cpu.o
+OBJ += util_optimize_soa_mic.o
+OBJ += load.o data.o rmsd.o util.o util_print.o
+
+default: $(EXE)
+
+$(EXE): $(OBJ)
+	$(CXX_HOST) $(LIBPATH) $(OBJ) -o $@ $(LINKFLAGS)
+
+dock.o: dock.C
+	$(CXX_HOST) $(CXXFLAGS_HOST) -c $< -o $@
+
+
+
+######################################################
+
+# frontend
+
+rmsd.o: rmsd.f
+	$(FC_HOST) $(FCFLAGS_HOST) -c $< -o $@
+
+load.o: load.C
+	$(CXX_HOST) $(CXXFLAGS_HOST) -c $< -o $@
+
+data.o: data.C
+	$(CXX_HOST) $(CXXFLAGS_HOST) -c $< -o $@
+
+util.o: util.C
+	$(CXX_HOST) $(CXXFLAGS_HOST) -c $< -o $@
+
+util_print.o: util_print.C
+	$(CXX_HOST) $(CXXFLAGS_HOST) -c $< -o $@
+
+util_optimize_soa_cpu.o: util_optimize_soa.C
+	$(CXX_HOST) $(CXXFLAGS_HOST) $(MARCRO_TARGET) -DTARGET_DEVICE=$(TARGET_CPU)  -c $< -o $@
+
+util_optimize_soa_mic.o: util_optimize_soa.C
+	$(CXX_HOST) $(CXXFLAGS_HOST) $(MARCRO_TARGET) -DTARGET_DEVICE=$(TARGET_MIC)  -c $< -o $@
+
+
+
+# backend_cpu_mic
+
+backend_cpu.o: backend_cpu_mic.C
+	$(CXX_HOST) $(CXXFLAGS_HOST) $(MARCRO_TARGET) -DTARGET_DEVICE=$(TARGET_CPU) -c $< -o $@
+
+backend_mic.o: backend_cpu_mic.C
+	$(CXX_HOST) $(CXXFLAGS_HOST) $(MARCRO_TARGET) -DTARGET_DEVICE=$(TARGET_MIC) -c $< -o $@
+
+
+
+
+run: $(EXE)
+	@(myexe=`readlink -f $(EXE)` && cd ../data && $$myexe -nt 20)
+
+
+echo:
+	@(echo EXE $(EXE))
+	@(echo OBJ $(OBJ))
+
+clean:
+	@(rm -f ${EXE} *.o)
+
