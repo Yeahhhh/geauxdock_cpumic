@@ -337,8 +337,7 @@ MonteCarlo_d (Complex * complex, Record * rec, const int s1, const int s2max)
                             (1.0f - (3.5f / 81.0f * dst_pow2 -
                                      4.5f / 81.0f / 81.0f * dst_pow4 +
                                      2.5f / 81.0f / 81.0f / 81.0f * dst_pow4 * dst_pow2 -
-                                     0.5f / 81.0f / 81.0f / 81.0f / 81.0f * dst_pow4 *
-                                     dst_pow4));
+                                     0.5f / 81.0f / 81.0f / 81.0f / 81.0f * dst_pow4 * dst_pow4));
                     }
 
                     /* L-J potential */
