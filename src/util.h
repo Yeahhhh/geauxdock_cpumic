@@ -6,7 +6,7 @@
 #include <string>
 
 
-#include <dock.h>
+#include "geauxdock.h"
 
 using namespace std;
 

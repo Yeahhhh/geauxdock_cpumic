@@ -5,8 +5,6 @@
 #include "size.h"
 
 
-
-
 struct Energy
 {
   float e[MAXWEI];
@@ -16,13 +14,10 @@ struct Energy
      2 - pmf
      3 - psp
      4 - hdb
-
      5 - hpc
      6 - kde
      7 - lhm
-
      8 - dst
-
      9 - total
    */
   float cms;

@@ -9,7 +9,7 @@ CXX_MPI := mpiicpc
 CXX_HOST := icpc
 FC_HOST := ifort
 
-HEADPATH += -I. -I./module
+HEADPATH += -I./module
 
 LIBPATH += -L./module/lib
 
@@ -35,7 +35,8 @@ CXXFLAGS_HOST += -openmp
 EXE := main_unittest_1_load
 
 OBJ += $(EXE:=.o)
-OBJ += load.o data.o rmsd.o util.o
+OBJ += load.o data.o rmsd.o util.o util_print.o
+
 
 
 
@@ -51,27 +52,21 @@ $(EXE): $(OBJ)
 %.o: %.C
 	$(CXX_HOST) $(CXXFLAGS_HOST) -c $< -o $@
 
-util_optimize_soa_cpu.o: util_optimize_soa.C
-	$(CXX_HOST) $(CXXFLAGS_HOST) $(MARCRO_TARGET) -DTARGET_DEVICE=$(TARGET_CPU)  -c $< -o $@
-
-util_optimize_soa_mic.o: util_optimize_soa.C
-	$(CXX_HOST) $(CXXFLAGS_HOST) $(MARCRO_TARGET) -DTARGET_DEVICE=$(TARGET_MIC)  -c $< -o $@
-
-backend_cpu.o: backend_cpu_mic.C
+dock_mckernel_cpu.o: dock_mckernel_cpu_mic.C
 	$(CXX_HOST) $(CXXFLAGS_HOST) $(MARCRO_TARGET) -DTARGET_DEVICE=$(TARGET_CPU) -c $< -o $@
 
-backend_mic.o: backend_cpu_mic.C
+dock_mckernel_mic.o: dock_mckernel_cpu_mic.C
 	$(CXX_HOST) $(CXXFLAGS_HOST) $(MARCRO_TARGET) -DTARGET_DEVICE=$(TARGET_MIC) -c $< -o $@
 
 
 
 
 run: $(EXE)
+#	@(myexe=`readlink -f $(EXE)` && cd ../data && $$myexe -nt 20)
 	./$(EXE) -nt 20
 
 test: $(EXE)
 	./$(EXE)
-
 
 echo:
 	@(echo EXE $(EXE))

@@ -16,7 +16,7 @@
 #ifndef __RMSD_H_
 #define __RMSD_H_
 
-#include <size.h>
+#include "size.h"
 
 extern "C"
 {

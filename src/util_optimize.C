@@ -4,9 +4,9 @@
 #include <cstdio>
 #include <cmath>
 
-#include <size.h>
-#include <toggle.h>
-#include <dock.h>
+#include "geauxdock.h"
+#include "size.h"
+#include "toggle.h"
 
 
 struct DataSort
@@ -59,12 +59,16 @@ OptimizeLigand (const Ligand0 * lig0, const Kde * kde, Ligand * lig, const int n
       ds.push_back (d);
     }
 
+
+// CPU/MIC backend: rearranging in increament order of "t"
+// GPU backend:     no rearranging
+
 #if 1
-#if TARGET_DEVICE == TARGET_CPU || TARGET_DEVICE == TARGET_MIC
+//#if TARGET_DEVICE == TARGET_CPU || TARGET_DEVICE == TARGET_MIC
     //if (i == 0)
     //printf ("sort ligand\n");
     std::sort (ds.begin(), ds.end(), DataSortInc);
-#endif
+//#endif
 #endif
 #if 0
     printf ("index:   ");
@@ -88,7 +92,7 @@ OptimizeLigand (const Ligand0 * lig0, const Kde * kde, Ligand * lig, const int n
 
 
 
-    // xyz2
+    // x2, y2, z2, no rearranging
     for (int j = 0; j < lig_natom; ++j) {
       dst->x2[j] = src->coord_orig.x[j];
       dst->y2[j] = src->coord_orig.y[j];
@@ -96,23 +100,6 @@ OptimizeLigand (const Ligand0 * lig0, const Kde * kde, Ligand * lig, const int n
     }
 
 
-
-
-
-    // sort ligand in increament order of t 
-    std::vector <DataSort> ds2;
-    for (int j = 0; j < lig_natom; ++j) {
-      DataSort d = {j, src->t[j]};
-      ds2.push_back (d);
-    }
-    std::sort (ds2.begin(), ds2.end(), DataSortInc);
-    for (int j = 0; j < lig_natom; ++j) {
-        const int j2 = ds2[j].id;
-        dst->x3[j] = src->coord_orig.x[j2];
-        dst->y3[j] = src->coord_orig.y[j2];
-        dst->z3[j] = src->coord_orig.z[j2];
-        dst->t3[j] = src->t[j2];
-    }
   }
 
 
@@ -121,13 +108,7 @@ OptimizeLigand (const Ligand0 * lig0, const Kde * kde, Ligand * lig, const int n
 
 
 
-
-
-
-
   // index for access KDE points
-
-
 /*
   find kde_begin_idx[], and kde_end_idx[]
   kde is always sort by t
@@ -147,7 +128,7 @@ OptimizeLigand (const Ligand0 * lig0, const Kde * kde, Ligand * lig, const int n
           mylig->kde_begin_idx[l] = 0;
           mylig->kde_end_idx[l] = 0;
           int match_kde_status = 0;
-          const int lig__t = mylig->t3[l];
+          const int lig__t = mylig->t[l];
           const int kde_npoint = kde->kde_npoint;
 
 #if 0
@@ -204,6 +185,9 @@ CopyProteinPoint (const Protein0 * prt0, Protein * prt,
   prt->hpp[i] = enepara0->hpp[d];
 
 }
+
+
+
 
 void
 OptimizeProtein (Protein0 * prt0, Protein * prt, const EnePara0 * enepara0,
@@ -366,43 +350,10 @@ OptimizeKde (const Kde0 * kde0, Kde * kde)
 
 // sorting MCS is incorrect
 void
-OptimizeMcs (const Mcs0 * mcs0, Mcs * mcs, Mcs_R * mcs_r, Mcs_ELL * mcs_ell, Mcs_CSR *mcs_csr, const int nrow)
+OptimizeMcs (const Mcs0 * mcs0, Mcs_ELL * mcs_ell, const int nrow)
 {
     //printf ("mcs_nrow = %d, MAX_MCS_COL= %d\n", nrow, MAX_MCS_COL); // nrow 11, ncol 128
 
-
-#if 1
-    // mcs
-    for (int i = 0; i < nrow; ++i) {
-        const Mcs0 *src = &mcs0[i];
-        Mcs *dst = &mcs[i];
-        for (int j = 0; j < MAX_MCS_COL; ++j) {
-            dst->x[j] = src->x[j];
-            dst->y[j] = src->y[j];
-            dst->z[j] = src->z[j];
-        }
-        mcs[i].ncol = mcs0[i].ncol;
-        mcs[i].tcc = mcs0[i].tcc;
-    }
-#endif
-
-
-#if 0
-    // mcs_r
-    for (int i = 0; i < nrow; ++i) {
-        const Mcs0 *src = &mcs0[i];
-        for (int j = 0; j < MAX_MCS_COL; ++j) {
-            mcs_r->x[j][i] = src->x[j];
-            mcs_r->y[j][i] = src->y[j];
-            mcs_r->z[j][i] = src->z[j];
-        }
-        mcs_r->tcc[i] = src->tcc;
-    }
-#endif
-
-
-    // mcs_ell
-#if 1
     for (int i = 0; i < nrow; ++i) {
         const Mcs0 *src = &mcs0[i];
         const int ncol = src->ncol;
@@ -415,66 +366,12 @@ OptimizeMcs (const Mcs0 * mcs0, Mcs * mcs, Mcs_R * mcs_r, Mcs_ELL * mcs_ell, Mcs
         mcs_ell->ncol[i] = src->ncol;
         mcs_ell->tcc[i] = src->tcc;
     }
-#endif
-
-
-
-
-
-#if 1
-    // mcs_csr, mcs_coo
-    int row_ptr[MAX_MCS_ROW]; // row pointer for CSR sparse matrix
-    row_ptr[0] = 0;
-    for (int i = 0; i < nrow; ++i) {
-        const Mcs0 *src = &mcs0[i];
-        const int ncol = src->ncol;
-        for (int j = 0; j < ncol; ++j) {
-            const int linear_ptr = row_ptr[i] + j;
-            mcs_csr->idx_col[linear_ptr] = src->idx_col[j];
-            mcs_csr->idx_row[linear_ptr] = i;
-            mcs_csr->x[linear_ptr] = src->x2[j];
-            mcs_csr->y[linear_ptr] = src->y2[j];
-            mcs_csr->z[linear_ptr] = src->z2[j];
-        }
-        mcs_csr->tcc[i] = src->tcc;
-        row_ptr[i + 1] = row_ptr[i] + ncol;
-    }
-    mcs_csr->npoint = row_ptr[nrow];
-
-/*
-    mcs_csr->nrow = nrow;
-    mcs_csr->row_ptr[0] = row_ptr[0];
-    for (int i = 0; i < nrow; ++i) {
-        mcs_csr->row_ptr[i + 1] = row_ptr[i + 1];
-*/
-
-
-
-#if 0
-    int npoint = row_ptr[nrow];
-    printf ("%d mcs rows\n", nrow);
-    printf ("%d total mcs points\n", npoint);
-    for (int i = 0; i < npoint; ++i) {
-        printf ("%2d ", mcs_csr->i[i]);
-    }
-    printf ("\n");
-#endif
-#endif
 }
 
 
 
 
 
-
-
-
-
-
-
-
-
-#if 1
 void
 OptimizeEnepara (const EnePara0 * enepara0, EnePara * enepara)
 {
@@ -527,61 +424,4 @@ OptimizeEnepara (const EnePara0 * enepara0, EnePara * enepara)
     // cout << enepara->w[i] << endl;
   }
 }
-#endif
-
-
-#if 0
-void
-OptimizeEnepara (const EnePara0 * enepara0, EnePara * enepara)
-{
-  const float sqrt_2_pi = sqrtf (2.0f * PI);
-
-  for (int i = 0; i < MAXTP2; ++i) {	// lig
-    for (int j = 0; j < MAXTP1; ++j) {	// prt
-      const float tmp = enepara0->vdw[j][i][0] * enepara0->lj[2];
-      enepara->p1a[i][j] = 2.0f * enepara0->vdw[i][j][1] * powf (tmp, 9.0f);
-      enepara->p2a[i][j] = 3.0f * enepara0->vdw[i][j][1] * powf (tmp, 6.0f);
-    }
-  }
-  enepara->lj0 = enepara0->lj[0];
-  enepara->lj1 = enepara0->lj[1];
-
-  enepara->el1 = enepara0->el[1];
-  enepara->el0 = enepara0->el[0];
-  enepara->a1 = 4.0f - 3.0f * enepara0->el[0];
-  enepara->b1 = 2.0f * enepara0->el[0] - 3.0f;
-
-
-  for (int i = 0; i < MAXTP2; ++i) {	// lig
-    for (int j = 0; j < MAXTP1; ++j) {	// prt
-      enepara->pmf0[i][j] = enepara0->pmf[i][j][0];
-      enepara->pmf1[i][j] = enepara0->pmf[i][j][1];
-      enepara->hdb0[i][j] = enepara0->hdb[i][j][0];
-      enepara->hdb1[i][j] = 1.0f / enepara0->hdb[i][j][1];
-    }
-  }
-
-  for (int i = 0; i < MAXTP4; ++i)
-    enepara->hpp[i] = enepara0->hpp[i];
-  for (int i = 0; i < MAXTP2; ++i) {
-    enepara->hpl0[i] = enepara0->hpl[i][0];
-    enepara->hpl1[i] = enepara0->hpl[i][1];
-    enepara->hpl2[i] = logf (1.0f / (enepara->hpl1[i] * sqrt_2_pi));
-  }
-
-  enepara->kde2 = -0.5f / (enepara0->kde * enepara0->kde);
-  enepara->kde3 = powf (enepara0->kde * sqrt_2_pi, 3.0f);
-
-  for (int i = 0; i < MAXWEI; ++i) {
-    enepara->w[i] = enepara0->w[i];
-    // cout << enepara->w[i] << endl;
-  }
-
-  for (int i = 0; i < MAXWEI; ++i) {
-    enepara->a_para[i] = enepara0->a_para[i];
-    enepara->b_para[i] = enepara0->b_para[i];
-    // cout << enepara->w[i] << endl;
-  }
-}
-#endif
 

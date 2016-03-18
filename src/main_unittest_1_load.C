@@ -7,13 +7,10 @@
 #include <cstdio>
 
 
-#include <size.h>
-#include <dock.h>
-#include <util.h>
-#include <util_optimize.h>
-#include <util_print.h>
-#include <toggle.h>
-#include <load.h>
+#include "size.h"
+#include "geauxdock.h"
+#include "util.h"
+#include "load.h"
 
 #include <catch/catch.hpp>
 

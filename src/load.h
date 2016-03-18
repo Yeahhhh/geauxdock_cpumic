@@ -2,8 +2,8 @@
 #define  LOAD_H
 
 #include <vector>
+#include "geauxdock.h"
 
-#include <dock.h>
 
 using namespace std;
 

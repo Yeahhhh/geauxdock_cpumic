@@ -9,11 +9,11 @@
 #include <sys/stat.h>
 
 
-#include <size.h>
-#include <toggle.h>
-#include <dock.h>
-#include <util.h>
-#include <load.h>
+#include "geauxdock.h"
+#include "size.h"
+#include "toggle.h"
+#include "util.h"
+#include "load.h"
 
 #include <yeah/c/mkdir.h>
 

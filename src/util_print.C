@@ -3,10 +3,10 @@
 #include <cstdio>
 #include <cstring>
 
-#include <size.h>
-#include <toggle.h>
-#include <dock.h>
-#include <util_print.h>
+#include "geauxdock.h"
+#include "size.h"
+#include "toggle.h"
+#include "util_print.h"
 
 
 
@@ -290,7 +290,7 @@ PrintDataSize (const ParaH ph)
   float prt_sz = sizeof (Protein) / 1024;
   float psp_sz = sizeof (Psp) / 1024;
   float kde_sz = sizeof (Kde) / 1024;
-  float mcs_sz = sizeof (Mcs) / 1024;
+  float mcs_sz = sizeof (Mcs_ELL) / 1024;
   float enepara_sz = sizeof (EnePara) / 1024;
 
   printf ("lig \t\tprt \t\tpsp \t\tkde \t\tmcs \t\tenepara\n");

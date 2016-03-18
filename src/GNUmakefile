@@ -9,7 +9,7 @@ CXX_MPI := mpiicpc
 CXX_HOST := icpc
 FC_HOST := ifort
 
-HEADPATH += -I. -I./module
+HEADPATH += -I./module
 
 LIBPATH += -L./module/lib
 
@@ -35,9 +35,9 @@ CXXFLAGS_HOST += -openmp
 EXE := main_geauxdock
 
 OBJ += $(EXE:=.o)
-OBJ += backend_cpu.o
-#OBJ += util_optimize_soa_cpu.o
-OBJ += util_optimize_soa_mic.o
+OBJ += dock_mckernel_cpu.o
+#OBJ += dock_mckernel_mic.o
+OBJ += dock_cpu_mic.o util_optimize.o
 OBJ += load.o data.o rmsd.o util.o util_print.o
 
 
@@ -55,16 +55,10 @@ $(EXE): $(OBJ)
 %.o: %.C
 	$(CXX_HOST) $(CXXFLAGS_HOST) -c $< -o $@
 
-util_optimize_soa_cpu.o: util_optimize_soa.C
-	$(CXX_HOST) $(CXXFLAGS_HOST) $(MARCRO_TARGET) -DTARGET_DEVICE=$(TARGET_CPU)  -c $< -o $@
-
-util_optimize_soa_mic.o: util_optimize_soa.C
-	$(CXX_HOST) $(CXXFLAGS_HOST) $(MARCRO_TARGET) -DTARGET_DEVICE=$(TARGET_MIC)  -c $< -o $@
-
-backend_cpu.o: backend_cpu_mic.C
+dock_mckernel_cpu.o: dock_mckernel_cpu_mic.C
 	$(CXX_HOST) $(CXXFLAGS_HOST) $(MARCRO_TARGET) -DTARGET_DEVICE=$(TARGET_CPU) -c $< -o $@
 
-backend_mic.o: backend_cpu_mic.C
+dock_mckernel_mic.o: dock_mckernel_cpu_mic.C
 	$(CXX_HOST) $(CXXFLAGS_HOST) $(MARCRO_TARGET) -DTARGET_DEVICE=$(TARGET_MIC) -c $< -o $@
 
 

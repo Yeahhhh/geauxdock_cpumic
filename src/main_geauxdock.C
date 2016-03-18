@@ -5,16 +5,15 @@
 #include <cstdio>
 
 
-#include <size.h>
-#include <dock.h>
-#include <util.h>
-#include <util_optimize.h>
-#include <util_print.h>
-#include <toggle.h>
-#include <load.h>
-//#include <record.h>
+#include "geauxdock.h"
+#include "size.h"
+#include "dock.h"
+#include "util.h"
+#include "util_optimize.h"
+#include "util_print.h"
+#include "toggle.h"
+#include "load.h"
 
-#include "backend_cpu_mic.h"
 #include <yeah/c/timing.h>
 #include <yeah/cpp/timer.hpp>
 
@@ -45,6 +44,7 @@ int main (int argc, char **argv)
   Complex *complex = new Complex[ncomplex];
 
   printf ("task pool size = %d\n", ncomplex);
+  printf ("\n");
 
 
 
@@ -55,10 +55,7 @@ int main (int argc, char **argv)
   Ligand **ligs = new Ligand*[conf_lig];
   Psp **psps = new Psp*[conf_lig];
   Kde **kdes = new Kde*[conf_lig];
-  Mcs **mcss = new Mcs*[conf_lig];
-  Mcs_R **mcss_r = new Mcs_R*[conf_lig];
   Mcs_ELL **mcss_ell = new Mcs_ELL*[conf_lig];
-  Mcs_CSR **mcss_csr = new Mcs_CSR*[conf_lig];
 
   for (int i = 0; i < conf_lig; ++i) {
     lig0s[i] = new Ligand0[MAX_CONF_LIG];
@@ -68,10 +65,7 @@ int main (int argc, char **argv)
     ligs[i] = new Ligand[MAX_CONF_LIG];
     psps[i] = new Psp;
     kdes[i] = new Kde;
-    mcss[i] = new Mcs[MAX_MCS_ROW];
-    mcss_r[i] = new Mcs_R;
     mcss_ell[i] = new Mcs_ELL;
-    mcss_csr[i] = new Mcs_CSR;
   }
   t[6].Stop ();
 
@@ -88,7 +82,7 @@ int main (int argc, char **argv)
     OptimizeKde (kde0s[i], kdes[i]);
     OptimizeLigand (lig0s[i], kdes[i], ligs[i], inputfiles->lig_files[i].conf_total);
     OptimizePsp (psp0s[i], psps[i]);
-    OptimizeMcs (mcs0s[i], mcss[i], mcss_r[i], mcss_ell[i], mcss_csr[i], inputfiles->lhm_files[i].mcs_nrow);
+    OptimizeMcs (mcs0s[i], mcss_ell[i], inputfiles->lhm_files[i].mcs_nrow);
   }
   t[7].Stop ();
 
@@ -201,10 +195,7 @@ int main (int argc, char **argv)
     cc->enepara = *enepara;
     for (int j = 0; j < sz.n_lig; ++j) cc->lig[j] = ligs[i][j];
     for (int j = 0; j < sz.n_prt; ++j) cc->prt[j] = prt[j];
-    for (int j = 0; j < sz.mcs_nrow; ++j)   cc->mcs[j] = mcss[i][j];
-    cc->mcs_r =  mcss_r[i][0];
     cc->mcs_ell =  mcss_ell[i][0];
-    cc->mcs_csr =  mcss_csr[i][0];
     for (int j = 0; j < sz.n_tmp; ++j) cc->temp[j] = temp[j];
     for (int j = 0; j < sz.n_rep; ++j) cc->replica[j] = replica[j];
 
@@ -257,7 +248,6 @@ int main (int argc, char **argv)
   Record *record = (Record *) malloc (sizeof (Record) * MAX_REP);
   for (int i = 0; i < ncomplex; ++i) {
 	Complex *job = complex + i;
-	printf ("%s start docking\n", argv[0]);
 	Dock (job, record);
   }
   free (record);
@@ -293,18 +283,12 @@ int main (int argc, char **argv)
     delete[]ligs[i];
     delete[]psps[i];
     delete[]kdes[i];
-    delete[]mcss[i];
-    delete[]mcss_r[i];
     delete[]mcss_ell[i];
-    delete[]mcss_csr[i];
   }
   delete[]ligs;
   delete[]psps;
   delete[]kdes;
-  delete[]mcss;
-  delete[]mcss_r;
   delete[]mcss_ell;
-  delete[]mcss_csr;
 
   delete[]prt;
   delete[]enepara;
