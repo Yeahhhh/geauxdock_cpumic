@@ -32,14 +32,10 @@ CXXFLAGS_HOST += -openmp
 ######################################################
 
 
-EXE := main_geauxdock
+EXE := main_unittest_1_load
 
 OBJ += $(EXE:=.o)
-OBJ += backend_cpu.o
-#OBJ += util_optimize_soa_cpu.o
-OBJ += util_optimize_soa_mic.o
-OBJ += load.o data.o rmsd.o util.o util_print.o
-
+OBJ += load.o data.o rmsd.o util.o
 
 
 
@@ -71,11 +67,11 @@ backend_mic.o: backend_cpu_mic.C
 
 
 run: $(EXE)
-#	@(myexe=`readlink -f $(EXE)` && cd ../data && $$myexe -nt 20)
 	./$(EXE) -nt 20
 
 test: $(EXE)
 	./$(EXE)
+
 
 echo:
 	@(echo EXE $(EXE))
