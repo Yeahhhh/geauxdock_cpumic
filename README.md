@@ -1,7 +1,13 @@
-    A LA-SiGMA Software Distribution
-GeauxDock: GPU Accelerated Molecular Docking
-    Version x (rxxx) - xx xxxxx 20xx
-Copyright 2014 Louisiana State University
+- [GeauxDock: GPU Accelerated Molecular Docking](#sec-1)
+- [Introduction](#sec-2)
+
+# GeauxDock: GPU Accelerated Molecular Docking<a id="orgheadline1"></a>
+
+A LA-SiGMA Software Distribution
+
+Copyright 2016 Louisiana State University
+
+# Introduction<a id="orgheadline2"></a>
 
 GeauxDock is an ultra-fast automated docking program, designed to predict
 how small ligands bind to pharmacologically relevant macromolecules.
