@@ -111,6 +111,7 @@ readme file would be “/home/smith/geauxdock/README.txt”.
 
 
  [ ]  Prepair The Input Data
+      Commands:
 
       $ cd /home/smith/geauxdock/run
       $ ./mklist.sh

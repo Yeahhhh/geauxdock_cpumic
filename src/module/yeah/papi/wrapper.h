@@ -9,9 +9,17 @@
 #include <papi.h>
 
 
+
+// can't use wrapper in the followsing APIs
+//PAPI_ERR (PAPI_shutdown ()); // error: invalid use of void expression
+
+
+
+
+
 #define PAPI_ERR(err) __GetPapiError1 (err, __FILE__, __LINE__)
 
-
+#define PAPI_ERR_INIT(err) __GetPapiError2 (err, __FILE__, __LINE__)
 
 
 
@@ -19,7 +27,7 @@
 extern "C" {
 #endif
 
-inline void
+void
 __GetPapiError1 (int err, const char * const file, int line)
 {
     if (err < PAPI_OK) {
@@ -41,9 +49,24 @@ __GetPapiError1 (int err, const char * const file, int line)
     }
 }
 
+
+
+void
+__GetPapiError2 (int err, const char * const file, int line)
+{
+    if (err != PAPI_VER_CURRENT) {
+        printf ("%s\tFAILED\nLine # %d\n", file, line);
+        printf ("Error: %s\n", PAPI_strerror (err));
+        exit (EXIT_FAILURE);
+    }
+}
+
+
 #ifdef __cplusplus
 }
 #endif
+
+
 
 
 #endif

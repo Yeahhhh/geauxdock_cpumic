@@ -125,14 +125,19 @@ struct MYALIGN Ligand
   float x[MAXLIG];		// Ligand x coords, optimized
   float y[MAXLIG];		// Ligand y coords, optimized
   float z[MAXLIG];		// Ligand z coords, optimized
+  int   t[MAXLIG];		// atom type, index, might sort ligand point by t
+  float c[MAXLIG];		// atom charge, optimized
 
-  // xyz with the same order from Ligand0, no rearrange, for MCS computation
+
+  // no rearrange, for MCS computation
   float x2[MAXLIG];
   float y2[MAXLIG];
   float z2[MAXLIG];
 
-  int t[MAXLIG];		// atom type, index, might sort ligand point by t
-  float c[MAXLIG];		// atom charge, optimized
+
+
+
+
 
 
   int kde_begin_idx[MAXLIG];

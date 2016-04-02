@@ -5,22 +5,29 @@
 #include <yeah/opencl/cl.h>
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+
 typedef struct {
-  const cl_device_info info;
-  const char * str;
+    const cl_device_info info;
+    const char * str;
 } Device_info;
 
 
 typedef struct {
-  const cl_platform_info info;
-  const char * str;
+    const cl_platform_info info;
+    const char * str;
 } Platform_info;
 
 
 typedef struct {
-  const cl_program_info info;
-  const char * str;
+    const cl_program_info info;
+    const char * str;
 } Program_info;
+
 
 
 
@@ -55,6 +62,12 @@ print_program_info (cl_program program);
 
 void
 print_program_info_binary (cl_program program);
+
+
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif

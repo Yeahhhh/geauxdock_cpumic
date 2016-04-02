@@ -26,7 +26,7 @@ echo:
 	@echo $(SRC)
 	@echo $(OBJ)
 	@echo $(EXE)
-      	@for bin in $(EXE); do echo $$bin; done
+	@for bin in $(EXE); do echo $$bin; done
 
 clean:
 	$(RM) $(OBJ)

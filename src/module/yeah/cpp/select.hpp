@@ -1,6 +1,8 @@
 #ifndef _YEAH_CPP_SELECT_HPP_
 #define _YEAH_CPP_SELECT_HPP_
 
+#include <iostream>
+
 namespace yeah {
 
 
@@ -71,12 +73,10 @@ namespace yeah {
     double Avg_array (T *first, T *last)
     {
         double a = 0;
-        int counter = 0;
-        for (T *i = first; i <= last; ++i) {
+        int n = last - first + 1;
+        for (T *i = first; i <= last; ++i)
             a += *i;
-            counter++;
-        }
-        a /= (double) counter;
+        a /= n;
         return a;
     }
 
@@ -98,6 +98,7 @@ namespace yeah {
     }
 
 
+//if first == last, ignore "exclude_idx"
     template <class T>
     int Max_array_idx_exclude (T *first, T *last, const int exclude_idx)
     {
@@ -111,6 +112,7 @@ namespace yeah {
     }
 
 
+//if first == last, ignore "exclude_idx"
     template <class T>
     T Min_array_exclude (T *first, T *last, const int exclude_idx)
     {
@@ -118,6 +120,8 @@ namespace yeah {
         return first[idx];
     }
 
+
+//if first == last, ignore "exclude_idx"
     template <class T>
     T Max_array_exclude (T *first, T *last, const int exclude_idx)
     {
@@ -127,8 +131,27 @@ namespace yeah {
 
 
 
+//if first == last, ignore "exclude_idx"
+    template <class T>
+    double Avg_array_exclude (T *first, T *last, const int exclude_idx)
+    {
+        int n = last - first + 1;
+        double a = Avg_array (first, last);
+        double rv;
+        if (n == 1) {
+            rv = a;
+            //std::cout << "Avg_array_exclude (): error, first == last"
+            //<< std::endl;
+        }
+        else {
+            rv = (a * n - first[exclude_idx]) / (n - 1);
+        }
+        return rv;
+    }
+
 }
 
 
 
 #endif
+

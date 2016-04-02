@@ -9,9 +9,8 @@ CXX_MPI := mpiicpc
 CXX_HOST := icpc
 FC_HOST := ifort
 
-HEADPATH += -I./module
-
-LIBPATH += -L./module/lib
+#HEADPATH += -I./module
+#LIBPATH += -L./module/lib
 
 LINKFLAGS += -lm -lrt -lyeahc
 LINKFLAGS += -openmp
@@ -66,7 +65,7 @@ dock_mckernel_mic.o: dock_mckernel_cpu_mic.C
 
 run: $(EXE)
 #	@(myexe=`readlink -f $(EXE)` && cd ../data && $$myexe -nt 20)
-	./$(EXE) -nt 20
+	./$(EXE) -nt 1
 
 test: $(EXE)
 	./$(EXE)

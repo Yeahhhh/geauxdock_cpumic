@@ -9,13 +9,13 @@
 
 
 #define cudaFuncSetCacheConfig(...) \
-  ;
+    ;
 
 #define cudaSetDevice(...) \
-  ;
+    ;
 
 #define cudaGetLastError() \
-  ;
+    ;
 
 
 
@@ -23,36 +23,36 @@
 #if 0
 // emulate CUDA malloc/free via CPU malloc/free
 #define CUDAMALLOC(ptr, sz, type) \
-  ptr = (type) malloc (sz)
+    ptr = (type) malloc (sz)
 
 #define CUDAFREE(...) \
-  free (__VA_ARGS__);
+    free (__VA_ARGS__);
 
 #define CUDAMEMCPY(dst, src, sz, direction) \
-  memcpy (dst, src, sz);
+    memcpy (dst, src, sz);
 #endif
 
 #if 1
 
 // emulate CUDA malloc/free via pointer assignment
 #define CUDAMALLOC(ptr, sz, type) \
-  ;
+    ;
 
 #define CUDAFREE(...) \
-  ;
+    ;
 
 #define CUDAMEMCPY(dst, src, sz, direction) \
-  dst = src;
+    dst = src;
 
 #endif
 
 
 
 #define CUDAMEMCPYTOSYMBOL(dst, src, type)\
-  dst = *src;
+    dst = *src;
 
 #define CUDAKERNEL_SYNC(funcname, dim_grid, dim_block, ...) \
-  funcname (__VA_ARGS__);
+    funcname (__VA_ARGS__);
 
 
 #endif

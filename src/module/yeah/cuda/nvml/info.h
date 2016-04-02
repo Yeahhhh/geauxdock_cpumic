@@ -16,7 +16,7 @@ typedef struct
     nvmlDevice_t device;                            // important
     nvmlPciInfo_t pciinfo;                          // important
     nvmlEccErrorCounts_t eccerrorcounts;            // important
-    nvmlUtilization_t utilization;                  // imoprtantn
+    nvmlUtilization_t utilization;                  // important
     nvmlMemory_t memory;                            // important
     nvmlBAR1Memory_t bar1memory;
     nvmlProcessInfo_t processinfo;

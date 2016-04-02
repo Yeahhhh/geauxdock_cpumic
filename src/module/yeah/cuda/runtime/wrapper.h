@@ -17,7 +17,7 @@
 #ifdef USE_SIMPLE_WRAPPER
 
 // reference:
-// nvidia/cuda4/cutil_inline_runtime.h: cudaSafeCall
+// nvidia/cuda4example/cutil_inline_runtime.h: cudaSafeCall
 #define CUDA_ERR(err) __GetError1 (err, __FILE__, __LINE__)
 
 inline void
@@ -33,8 +33,8 @@ __GetError1 (const cudaError_t err, const char * const file, const int line)
 #else
 
 // reference:
-// nvidia/cuda7/helper_cuda.h: checkCudaErrors
-#include <nvidia/cuda7/helper_cuda.h>
+// nvidia/cuda7example/helper_cuda.h: checkCudaErrors
+#include <nvidia/cuda7example/helper_cuda.h>
 #ifdef __DRIVER_TYPES_H__
 #define CUDA_ERR(err) check ( (err), #err, __FILE__, __LINE__ )
 #endif
@@ -50,8 +50,8 @@ __GetError1 (const cudaError_t err, const char * const file, const int line)
 // This will output the proper error string when calling cudaGetLastError
 //
 // reference:
-// nvidia/cuda4/cutil_inline_runtime.h: cutilCheckMsg
-// nvidia/cuda7/helper_cuda.h: getLastCudaError
+// nvidia/cuda4example/cutil_inline_runtime.h: cutilCheckMsg
+// nvidia/cuda7example/helper_cuda.h: getLastCudaError
 
 
 #define CUDA_LAST_ERR() __GetLastError1 (__FILE__, __LINE__)

@@ -30,8 +30,8 @@ namespace yeah {
 
 
 
-// usage:
-// yeah::TimerAuto t ("name");
+    // usage:
+    // yeah::TimerAuto t ("func ()");
 
     class TimerAuto: public Timer
     {
@@ -40,16 +40,19 @@ namespace yeah {
 
     public:
         TimerAuto (const std::string & name1)
-            {
-                name = name1;
-                Start ();
-            }
+        {
+            name = name1;
+            Start ();
+        }
 
         ~TimerAuto ()
-            {
-                Stop ();
-                std::cout << name << ": " << Span () << " ms" << std::endl;
-            }
+        {
+            Stop ();
+            std::cout <<
+                "TimerAuto: " <<
+                name << ": " <<
+                Span () << " ms" << std::endl;
+        }
     };
 
 }

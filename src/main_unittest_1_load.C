@@ -12,7 +12,7 @@
 #include "util.h"
 #include "load.h"
 
-#include <catch/catch.hpp>
+#include <Catch/include/catch.hpp>
 
 TEST_CASE( "Load", "[ligand]" )
 {

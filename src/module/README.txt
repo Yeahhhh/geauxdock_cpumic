@@ -15,5 +15,7 @@ Please read the copyright of each components before distributing the code.
 For what I understand, you should announce the following statement(s):
 
 This software contains source code provided by NVIDIA Corporation.
-This software contains source code (Random123) provided by D. E. Shaw Research.
+This software contains source code (Random123) developed by D. E. Shaw Research.
+This software contains source code Catch developed by Phil Nash
+
 

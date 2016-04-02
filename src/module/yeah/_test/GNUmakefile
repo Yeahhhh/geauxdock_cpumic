@@ -3,7 +3,7 @@ SRC = $(wildcard *.cpp)
 OBJ = $(SRC:.cpp=.o)
 EXE = $(SRC:.cpp=)
 
-CXX = g++ -O2
+CXX = g++ -O2 -std=c++14
 
 
 LINKFLAGS += -lyeahc -lrt

@@ -7,36 +7,36 @@
 
 namespace yeah {
 
-namespace cuda {
+    namespace cuda {
 
-  class Stream
-  {
-  public:
-    cudaStream_t s;
+        class Stream
+        {
+        public:
+            cudaStream_t s;
 
-    Stream () {}
-    ~Stream () {}
-    void Sync () { cudaStreamSynchronize (s); }
-    void SyncEvent (cudaEvent_t e) { cudaStreamWaitEvent (s, e, 0); }
-  };
-
-  
-  class StreamSD: public Stream
-  {
-  public:
-    StreamSD () { cudaStreamCreate (&s); }
-    ~StreamSD () { cudaStreamDestroy (s); }
-  };
+            Stream () {}
+            ~Stream () {}
+            void Sync () { cudaStreamSynchronize (s); }
+            void SyncEvent (cudaEvent_t e) { cudaStreamWaitEvent (s, e, 0); }
+        };
 
 
-  class StreamMD: public Stream
-  {
-  public:
-    void Create () { cudaStreamCreate (&s); }
-    void Destroy () { cudaStreamDestroy (s); }
-  };
+        class StreamSD: public Stream
+        {
+        public:
+            StreamSD () { cudaStreamCreate (&s); }
+            ~StreamSD () { cudaStreamDestroy (s); }
+        };
 
-}
+
+        class StreamMD: public Stream
+        {
+        public:
+            void Create () { cudaStreamCreate (&s); }
+            void Destroy () { cudaStreamDestroy (s); }
+        };
+
+    }
 }
 
 #endif

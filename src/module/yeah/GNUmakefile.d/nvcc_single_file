@@ -19,7 +19,7 @@ CXX_DEV = nvcc -O2
 
 CXXFLAGS_DEV += -O2
 CXXFLAGS_DEV += -arch=compute_35
-CXXFLAGS_DEV += -gencode arch=compute_35,code=sm_52
+#CXXFLAGS_DEV += -gencode arch=compute_35,code=sm_52
 CXXFLAGS_DEV += -use_fast_math
 CXXFLAGS_DEV += -Xptxas -dlcm=ca
 
@@ -42,7 +42,7 @@ echo:
 	@echo $(SRC)
 	@echo $(OBJ)
 	@echo $(EXE)
-      	@for bin in $(EXE); do echo $$bin; done
+	@for bin in $(EXE); do echo $$bin; done
 
 clean:
 #	$(RM) $(OBJ)

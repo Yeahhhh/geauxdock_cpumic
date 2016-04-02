@@ -25,14 +25,14 @@ all: $(EXE)
 	$(CC) $(CFLAGS) $(HEADPATH) -c $< -o $@
 
 $(EXE): $(OBJ)
-	$(CC) $(CFLAGS) $(LIBPATH) -o $@ $(OBJ) $(LINKFLAGS)
+	$(CC) $(CFLAGS) $(LIBPATH) $^ -o $@ $(LINKFLAGS)
 
 echo:
 	@echo $(HEADERS)
 	@echo $(SRC)
 	@echo $(OBJ)
 	@echo $(EXE)
-      	@for bin in $(EXE); do echo $$bin; done
+	@for bin in $(EXE); do echo $$bin; done
 
 run: $(EXE)
 	@(./$(EXE))

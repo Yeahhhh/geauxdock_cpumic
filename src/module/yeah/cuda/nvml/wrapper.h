@@ -14,11 +14,11 @@
 inline void
 __GetErrorNVML (const nvmlReturn_t err, const char *file, const int line)
 {
-  if (err != NVML_SUCCESS) {
-    printf ("%s(%d) : CUDA error : (%d) : %s.\n",
-      file, line, (int) err, nvmlErrorString (err));
-    exit (EXIT_FAILURE);
-  }
+    if (err != NVML_SUCCESS) {
+        printf ("%s(%d) : CUDA error : (%d) : %s.\n",
+            file, line, (int) err, nvmlErrorString (err));
+        exit (EXIT_FAILURE);
+    }
 }
 
 

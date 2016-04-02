@@ -6,6 +6,11 @@
 #include <yeah/opencl/cl.h>
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 /* Find a GPU or a CPU associated with the first available platform.
  * If use_gpu is set, then this function first tries to look for a GPU
  * in the first available platform.
@@ -24,10 +29,10 @@ cl_device_id opencl_choose_device (cl_device_type dev_type);
 /* Create an OpenCL program from a string and compile it.
  */
 cl_program opencl_build_program_from_string (cl_context ctx,
-					     cl_device_id dev,
-					     const char *program_source,
-					     size_t program_size,
-					     const char *opencl_options);
+                        cl_device_id dev,
+                        const char *program_source,
+                        size_t program_size,
+                        const char *opencl_options);
 
 
 
@@ -35,8 +40,14 @@ cl_program opencl_build_program_from_string (cl_context ctx,
 /* Create an OpenCL program from a source file and compile it.
  */
 cl_program opencl_build_program_from_file (cl_context ctx,
-					   cl_device_id dev,
-					   const char *filename,
-					   const char *opencl_options);
+                        cl_device_id dev,
+                        const char *filename,
+                        const char *opencl_options);
+
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif
