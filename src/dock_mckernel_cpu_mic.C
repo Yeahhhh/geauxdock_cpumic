@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <cstdio>
 #include <cmath>
 
 #include "geauxdock.h"
@@ -54,6 +55,42 @@ combine_linear (float *e, const float *a_para, const float *b_para, const float 
 
 
 
+#if TARGET_DEVICE == TARGET_MIC
+__attribute__ ((target (mic)))
+#endif
+static float
+combine_bayes (float *e, const float *para)
+{
+    float etotal = 0.00f;
+    return etotal;
+}
+
+
+
+
+
+
+#if TARGET_DEVICE == TARGET_MIC
+__attribute__ ((target (mic)))
+#endif
+void
+print_energies (float *e)
+{
+    printf ("k1  ");
+    for (int i = 0; i < MAXWEI; ++i)
+        printf ("%.8f ", e[i]);
+    printf ("\n");
+
+    printf ("ko    ");
+    for (int i = 0; i < MAXWEI; ++i)
+        printf ("%.4f ", e[i]);
+    printf ("\n");
+}
+
+
+
+
+
 
 
 void
@@ -93,15 +130,16 @@ MonteCarlo_d (Complex * complex, Record * rec, const int s1, const int s2max)
         float movematrix[6] MYALIGN; // translation x y z, rotation x y z
         float rot[3][3] MYALIGN; // rotz roty rotx
 
-        // lig is sorted by t
-        float lig_x1[MAXLIG] MYALIGN;
-        float lig_y1[MAXLIG] MYALIGN;
-        float lig_z1[MAXLIG] MYALIGN;
-
         // not sorted
         float lig_x2[MAXLIG] MYALIGN;
         float lig_y2[MAXLIG] MYALIGN;
         float lig_z2[MAXLIG] MYALIGN;
+
+        // sorted by t
+        float lig_x3[MAXLIG] MYALIGN;
+        float lig_y3[MAXLIG] MYALIGN;
+        float lig_z3[MAXLIG] MYALIGN;
+
 
         // kde is sorted by t
         int kde_begin_idx[MAXLIG] MYALIGN;
@@ -110,8 +148,8 @@ MonteCarlo_d (Complex * complex, Record * rec, const int s1, const int s2max)
 
         // constant
         // ligand
-        int lig_t[MAXLIG] MYALIGN;
-        float lig_c[MAXLIG] MYALIGN;
+        int   lig_t3[MAXLIG] MYALIGN;
+        float lig_c3[MAXLIG] MYALIGN;
         float lig_center[3] MYALIGN;
 
 
@@ -208,8 +246,8 @@ MonteCarlo_d (Complex * complex, Record * rec, const int s1, const int s2max)
 
 
         for (int l = 0; l < lig_natom; ++l) {
-            lig_t[l] = lig->t[l];
-            lig_c[l] = lig->c[l];
+            lig_t3[l] = lig->t3[l];
+            lig_c3[l] = lig->c3[l];
             kde_begin_idx[l] = lig->kde_begin_idx[l];
             kde_end_idx[l] = lig->kde_end_idx[l];
         }
@@ -286,18 +324,18 @@ MonteCarlo_d (Complex * complex, Record * rec, const int s1, const int s2max)
 
             // rotation, translation, coordinate system transformation
             for (int l = 0; l < lig_natom; ++l) {
-                const float x1 = lig->x[l];
-                const float y1 = lig->y[l];
-                const float z1 = lig->z[l];
                 const float x2 = lig->x2[l];
                 const float y2 = lig->y2[l];
                 const float z2 = lig->z2[l];
-                lig_x1[l] = rot[0][0] * x1 + rot[0][1] * y1 + rot[0][2] * z1 + movematrix[0] + lig_center[0];
-                lig_y1[l] = rot[1][0] * x1 + rot[1][1] * y1 + rot[1][2] * z1 + movematrix[1] + lig_center[1];
-                lig_z1[l] = rot[2][0] * x1 + rot[2][1] * y1 + rot[2][2] * z1 + movematrix[2] + lig_center[2];
+                const float x3 = lig->x3[l];
+                const float y3 = lig->y3[l];
+                const float z3 = lig->z3[l];
                 lig_x2[l] = rot[0][0] * x2 + rot[0][1] * y2 + rot[0][2] * z2 + movematrix[0] + lig_center[0];
                 lig_y2[l] = rot[1][0] * x2 + rot[1][1] * y2 + rot[1][2] * z2 + movematrix[1] + lig_center[1];
                 lig_z2[l] = rot[2][0] * x2 + rot[2][1] * y2 + rot[2][2] * z2 + movematrix[2] + lig_center[2];
+                lig_x3[l] = rot[0][0] * x3 + rot[0][1] * y3 + rot[0][2] * z3 + movematrix[0] + lig_center[0];
+                lig_y3[l] = rot[1][0] * x3 + rot[1][1] * y3 + rot[1][2] * z3 + movematrix[1] + lig_center[1];
+                lig_z3[l] = rot[2][0] * x3 + rot[2][1] * y3 + rot[2][2] * z3 + movematrix[2] + lig_center[2];
             }
 
 
@@ -317,15 +355,15 @@ MonteCarlo_d (Complex * complex, Record * rec, const int s1, const int s2max)
 
             for (int l = 0; l < lig_natom; ++l) { // lig loop, ~30
                 float ehpc1 = 0.0f;
-                const int lig__t = lig_t[l];
+                const int lig__t = lig_t3[l];
 
 #pragma simd reduction(+:evdw, eele, epmf, epsp, ehdb, ehpc, ehpc1)
                 for (int p = 0; p < prt_npoint; ++p) { // prt loop, ~300
                     const int prt__t = prt->t[p];
 
-                    const float dx = lig_x1[l] - prt->x[p];
-                    const float dy = lig_y1[l] - prt->y[p];
-                    const float dz = lig_z1[l] - prt->z[p];
+                    const float dx = lig_x3[l] - prt->x[p];
+                    const float dy = lig_y3[l] - prt->y[p];
+                    const float dz = lig_z3[l] - prt->z[p];
                     const float dst_pow2 = dx * dx + dy * dy + dz * dz;
                     const float dst_pow4 = dst_pow2 * dst_pow2;
                     const float dst = sqrtf (dst_pow2);
@@ -353,11 +391,11 @@ MonteCarlo_d (Complex * complex, Record * rec, const int s1, const int s2max)
                     /* electrostatic potential */
                     const float s1 = enepara_el1 * dst;
                     float g1;
-                    if (s1 < 1)
+                    if (s1 < 1.0f)
                         g1 = enepara_el0 + enepara_a1 * s1 * s1 + enepara_b1 * s1 * s1 * s1;
                     else
                         g1 = 1.0f / s1;
-                    eele += lig_c[l] * prt->ele[p] * g1;
+                    eele += lig_c3[l] * prt->ele[p] * g1;
 
 
                     /* contact potential */
@@ -395,7 +433,7 @@ MonteCarlo_d (Complex * complex, Record * rec, const int s1, const int s2max)
             } // lig loop
 
             float e_s[MAXWEI] MYALIGN;
-            e_s[0] = evdw; // 0 - vdw 
+            e_s[0] = evdw; // 0 - vdw
             e_s[1] = eele; // 1 - ele
             e_s[2] = epmf; // 2 - pmf (CP)
             e_s[3] = epsp; // 3 - psp (PS CP)
@@ -410,15 +448,15 @@ MonteCarlo_d (Complex * complex, Record * rec, const int s1, const int s2max)
             float ekde = 0.0f;
             for (int l = 0; l < lig_natom; ++l) { // lig loop, ~30
                 float ekde1 = 0.0f;
-                const int lig__t = lig_t[l];
+                const int lig__t = lig_t3[l];
 
                 const int begin = kde_begin_idx[l];
                 const int end = kde_end_idx[l];
 
                 for (int k = begin; k < end; ++k) { // kde loop, ~400
-                    const float dx = lig_x1[l] - kde->x[k];
-                    const float dy = lig_y1[l] - kde->y[k];
-                    const float dz = lig_z1[l] - kde->z[k];
+                    const float dx = lig_x3[l] - kde->x[k];
+                    const float dy = lig_y3[l] - kde->y[k];
+                    const float dz = lig_z3[l] - kde->z[k];
                     const float kde_dst_pow2 = dx * dx + dy * dy + dz * dz;
                     ekde1 += expf (enepara_kde2 * kde_dst_pow2);
                 }
@@ -472,6 +510,11 @@ MonteCarlo_d (Complex * complex, Record * rec, const int s1, const int s2max)
 
 
             const float etotal = combine_linear (e_s, enepara_a_para, enepara_b_para, enepara_w);
+
+#if 0
+            if (r == 0 && s2max == 1)
+                print_energies (e_s);
+#endif
 
 
 

@@ -15,8 +15,16 @@ how small ligands bind to pharmacologically relevant macromolecules.
 GeauxDock employs a novel hybrid force field and a Monte Carlo protocol for 
 the efficient sampling of conformational space.
 
-The codes have been tuned for NVidia Fermi and Kepler generation graphics 
-processing units (GPUs).
+
+A full featured version of GeauxDock runs on the following device:
+1.  Multi-core CPU
+2.  Xeon Phi
+3.  Nvidia GPU (require CC > 3.0), tunned for Kepler GK110 and Maxwell 2.0
+
+This branch of code is significnatly simplified for quickly developing
+new features. The GPU computation is not available in this branch.
+
+
 
 GeauxDock has applications in:
 
@@ -27,8 +35,11 @@ GeauxDock has applications in:
 Step-by-step setup and operating instructions can be found in 
 doc/instructions.txt.
 
-For the latest version and other resources visit
+The Official site of GeauxDock project is here
 <http://lasigma.loni.org/package/dock/>
+
+For the latest version and other resources visit
+<https://github.com/Yeahhhh/geauxdock_cpumic>
 
 LA-SiGMA, the Louisiana Alliance for Simulation-Guided Materials
 Applications, is a statewide interdisciplinary collaboration of

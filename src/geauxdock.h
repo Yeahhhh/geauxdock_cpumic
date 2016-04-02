@@ -122,26 +122,34 @@ struct InputFiles
 struct MYALIGN Ligand
 {
   // coord_xyz "orig" is under the ligand_ceter system
-  float x[MAXLIG];		// Ligand x coords, optimized
-  float y[MAXLIG];		// Ligand y coords, optimized
-  float z[MAXLIG];		// Ligand z coords, optimized
-  int   t[MAXLIG];		// atom type, index, might sort ligand point by t
-  float c[MAXLIG];		// atom charge, optimized
 
 
-  // no rearrange, for MCS computation
+  // xyz might be rearranged, for PRT computation
+  float x1[MAXLIG];		// Ligand x coords, optimized
+  float y1[MAXLIG];		// Ligand y coords, optimized
+  float z1[MAXLIG];		// Ligand z coords, optimized
+  int   t1[MAXLIG];		// atom type, index, might sort ligand point by t
+  float c1[MAXLIG];		// atom charge, optimized
+
+
+  // xyz no rearrange, for MCS computation
   float x2[MAXLIG];
   float y2[MAXLIG];
   float z2[MAXLIG];
+  int   t2[MAXLIG];
+  float c2[MAXLIG];
 
-
-
-
-
-
-
+  // xyz sort by "t", for KDE computation
+  float x3[MAXLIG];
+  float y3[MAXLIG];
+  float z3[MAXLIG];
+  int   t3[MAXLIG];
+  float c3[MAXLIG];
   int kde_begin_idx[MAXLIG];
   int kde_end_idx[MAXLIG];
+
+
+
 
   // coord_center is under the lab system
   float center[3];		// ligand geometric center

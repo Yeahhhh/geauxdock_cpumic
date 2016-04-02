@@ -64,7 +64,7 @@ Dock (Complex *complex, Record *record)
     //for (int r = 0; r < ph.complexsize->n_rep; ++r)
     for (int r = 0; r <= 0; ++r)
         PrintRecord (record, steps_per_dump, r, iter_begin, iter_end, arg);
-    printf ("  0 0 0.6434 -0.0369 -0.2079 -0.1845 0.8521 -0.8880 0.0523 0.1744 -1.0000 0.7735 Ref Result\n"); 
+    printf ("  0 0 0.6434 -0.0367 -0.2079 -0.1845 0.8521 -0.8880 0.0523 0.1744 -1.0000 0.7735 Ref Result\n"); 
 
 
     // print performance
