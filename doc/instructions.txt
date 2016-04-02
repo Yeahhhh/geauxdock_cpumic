@@ -1,10 +1,10 @@
                   A LA-SiGMA Software Distribution
              GeauxDock: GPU Accelerated Molecular Docking
-                  Version 0 (r000) - 17 April 2014
+                          Version X
               Copyright 2014 Louisiana State University
 	      
 This package contains codes and sample data for running molecular
-docking simulation on systems equipped with NVidia GPU. 
+docking simulation on multi-core CPU, or NVidia GPU. 
 	      
 For the latest version and other resources visit
 http://lasigma.loni.org/package/dock/
@@ -27,8 +27,8 @@ how small ligands bind to pharmacologically relevant macromolecules.
 GeauxDock  employs a novel hybrid force field and a Monte Carlo protocol for 
 the efficient sampling of conformational space.
 
-The codes have been tuned for NVidia Fermi- and Kepler-Generation Graphics 
-processing unit(GPU).
+The GPU codes use features that are supported since Kepler-Generation Graphics 
+processing unit(GPU), and been tunned for Kepler and Maxwell GPUs.
 
 GeauxDock has applications in:
 1. ligand virtual screening
@@ -90,76 +90,71 @@ GeauxDock has been tested on the following OS:
 
 GeauxDock has been tested with the following packages:
 
- CUDA 5 and the NVidia binary GPU drivers
+ CUDA 6.5 and the NVidia binary GPU drivers
+ CUDA 7.0 and the NVidia binary GPU drivers
+ CUDA 7.5 and the NVidia binary GPU drivers
+ intel compiler 15.0.0
  gcc 4.4.6
- hdf5 1.8.10
+ Bash (required for setting environment variables)
 
 
 === Steps - Initial Setup and Simple Run
 
 Follow these steps to setup and run the code the first time. The sample 
 commands are for a user with home directory "/home/smith/“ and who has unpacked 
-the GeauxDock distribution into a directory “dock/“, so that the path to the 
-readme file would be “/home/smith/dock/README.txt”.
+the GeauxDock distribution into a directory “geauxdock/“, so that the path to the 
+readme file would be “/home/smith/geauxdock/README.txt”.
 
  [ ]  Install Prerequisites
       Review the list of prerequisites, and install what is
-      needed. 
+      needed.
 
 
- [ ]  Set Location of CUDA and HDF5
-      If your CUDA installation is in /usr/local/cuda (the
-      default), and the HDF5 library is in /usr/local/lib,
-      then edit src/Makefile, and change the assignment of
-      LIBPATH so that it points to your CUDA and HDF5 installation.
+ [ ]  Prepair The Input Data
 
-      example:
-      LIBPATH := -L/usr/local/cuda/lib64 -L/usr/local/lib
+      $ cd /home/smith/geauxdock/run
+      $ ./mklist.sh
 
 
  [ ]  Build the Code
       Commands:
 
-      % cd /home/smith/dock/src/
-      % make
+      $ source module/sourceme.bash
+      $ cd /home/smith/geauxdock/src && make HOST=smic
 
-      If the build is successful a executable named "dock" will be created
+      If the build is successful a executable named "geauxdock" will be created
       in the src directory.  If not, find an experienced programmer
       to help identify and fix the problems.
- 
+
 
  [ ]  Run The Code
       The command below will run GeauxDock using the provided parameter file.
 
-      > cd /home/smith/dock/data
+      $ export OMP_PROC_BIND=true
+      $ export OMP_NUM_THREADS=20
+      $ cd /home/smith/geauxdock/src && make run
 
-      > ../src/dock -id 1a07C1 -p ./1a07C1/1a07C.pdb -l ./1a07C1/1a07C1.sdf \
-        -s ./1a07C1/1a07C1-0.8.ff -opt ./parameters/08ff_opt \
-        -na ./parameters/08_nor_a -nb ./parameters/08_nor_b \
-        -para ./parameters/paras -ns 2000 -nc 10 -floor_temp 0.044f \
-        -ceiling_temp 0.036f -nt 1 -t 0.02f -r 0.08f
+      or
+
+      $ cd /home/smith/dock/data
+      $ PATH/TO/geauxdock -ll ./astex/ligands/list.txt -lp ./astex/proteins/prt.txt -nt 1
+
 
       The execution using the provided input and parameter file should complete
-      in just a few seconds.
-
-      A folder named with the time stamp "YYYYmmdd_HHMMSS" will be 
-      created, under which you should see three output files: a_0000.h5,
-      a_0001.h5 and a_0002.h5.  These files record the Monte Carlo steps 0-999, 
-      1000-1999, and 2000-2999 respectively.
+      in a few seconds.
 
 
   [ ]  Results Verification
-       In case of a successful simulation using the example input files,
+       In case of a successful simulation using the example input file of
+       "1a07C1.sdf" and "1a07C-1.pdb"
        initial energy state as part of standard output should agree with the
        lines below:
 
-       initial energy state
-       ================================================================================
-       rep step vdw ele pmf psp hdb hpc kde lhm dst total
-with nomalization
-       0 0 0.6434 -0.0369 -0.2079 -0.1845 0.8521 -0.8880 0.0523 0.1744 -1.0000 0.7735
-without normalization
-       0 0 -0.7642 -0.0008 40.0290 -0.4717 -0.0723 0.2897 0.0095 0.3897 0.0000 2.2285
+       0 0 0.6434 -0.0367 -0.2079 -0.1845 0.8521 -0.8880 0.0523 0.1744 -1.0000 0.7735
+       0 0 0.6434 -0.0367 -0.2079 -0.1845 0.8521 -0.8880 0.0523 0.1744 -1.0000 0.7735 Ref Result
+       ...
+       Benchmark,              1a07C1.sdf,1a07C-1.pdb,100,100,51,1,1,51,34,344,454,11,150.459
+
 
 
 
@@ -167,16 +162,13 @@ without normalization
 
 == Command-line options
 
-1. Mandatory arguments
--id
-    ligand name
+-lp protein_text_file
+    a target protein
+    default:   /home/smith/geauxdock/data/astex/proteins/prt.txt
 
--p pdb_file
-    target protein structure in PDB(Protein Data Bank) format
-
--l sdf_file
-    ligand to dock in sdf format
-    (http://en.wikipedia.org/wiki/Chemical_table_file#SDF)
+-ll ligand_text_file
+    a list of ligands to be docked
+    defualt:   /home/smith/geauxdock/data/astex/ligands/ligs.txt
 
 -s ff_file
     force field parameters to calculate ligand-target interaction
@@ -192,9 +184,6 @@ without normalization
 
 -para
     energy calculation parameters
-
-
-2. Optional arguments
 
 -ns <integer>
     total Monte Carlo steps, 3000 by default
@@ -213,7 +202,7 @@ without normalization
     ceiling temperature set for the replicas, 0.036 by default
 
 -nt <integer>
-    temperature replica numbers, 6 by default
+    temperature replica numbers, 1 by default
 
 -t <float>
     transnational scale in each perturbation of the ligand, 0.02 (in Angstrom) 
@@ -235,14 +224,10 @@ without normalization
    files generated by eFindSite (http://brylinski.cct.lsu.edu/efindsite)
 
 == Output format
-1. standard output, including 
+screen output, including 
    * info on intput and output data paths
    * simulation parameter setup
    * runtime performance measurements
-
-2. hdf5 files recording docking trajectories
-   * a directory containing hdf5 files should have been created
-   * data analysis toolkit under development
 
 
 === Development History
@@ -253,7 +238,7 @@ small molecule docking in structure-based drug discovery. The current
 high-performance implementation is based on a serial C++ version written by 
 Michal Brylinski at Louisiana State University.
 
-This software contains source code provided by NVIDIA Corporation.
 
 == Changes in each release.
-First release.
+Third release.
+
